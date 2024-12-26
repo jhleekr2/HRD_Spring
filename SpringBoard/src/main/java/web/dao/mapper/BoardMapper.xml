@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="web.dao.face.BoardDao">
+
+	<select id="selectAll" resultType="web.dto.BoardVO">
+		SELECT board_no, title, writer_id,
+				writer_nick, hit, write_date,
+				(SELECT COUNT(*) FROM recommend WHERE boardno = board.board_no) AS recommend
+		FROM Board
+		ORDER BY board_no DESC
+	</select>
+
+<!-- 	<select id="selectCntAll" resultType="int"> -->
+<!-- 		SELECT count(*) -->
+<!-- 		from board -->
+<!-- 		where title like concat('%',#{search},'%') -->
+<!-- 		<if test ="search == null or search == '' "> -->
+<!-- 		where 1=1 -->
+<!-- 		</if>  -->
+<!-- 	</select> -->
+
+	<select id="selectCntAll" resultType="int">
+    SELECT count(*)
+    FROM board
+    <where>
+        <if test="search != null and search != ''">
+            title LIKE '%' || #{search} || '%'
+        </if>
+    </where>
+	</select>
+
+	<select id="selectPaging" resultType="web.dto.BoardVO" parameterType="web.dto.Paging">
+		SELECT * FROM
+			(SELECT rownum rnum, B.* FROM
+				(SELECT board_no, title, writer_id,
+					writer_nick, hit, write_date,
+						(SELECT COUNT(*) FROM recommend WHERE boardno = board.board_no) AS recommend
+					FROM Board
+						<where>
+							<if test="search != null and search != ''">
+								title LIKE '%' || #{search} || '%'
+							</if>
+						</where>
+					ORDER BY board_no DESC) B )
+		WHERE rnum BETWEEN #{startNo} AND #{endNo}	
+	</select>
+	
+	<update id="hit" parameterType="web.dto.Board">
+		UPDATE board SET
+		 hit=hit+1
+		 <where>
+		 	AND board_no = #{boardno}
+		 </where>
+	</update>
+	
+	<select id="select" resultType="web.dto.Board">
+		SELECT board_no, title, content, writer_id,
+				writer_nick, hit, write_date
+		FROM Board
+		<where>
+			AND board_no = #{boardno}
+		</where>
+	</select>
+	
+	<!-- 마이바티스에서 board_seq.nextval값을 나중에 사용하기 위해 반환값으로 만든다 -->
+	<!-- 그러기 위해서 useGeneratedKeys 옵션을 true로 켠다. -->
+	<insert id="write" parameterType="web.dto.Board" useGeneratedKeys="true" keyProperty="boardno">
+		<selectKey order="BEFORE" resultType="int" keyProperty="boardno">
+			SELECT board_seq.nextval FROM dual
+		</selectKey>
+		INSERT INTO board ( board_no, title, content, 
+							writer_id, writer_nick)
+		VALUES ( #{boardno}, #{title}, #{content}, #{writerId}, #{writerNick})
+	</insert>
+	
+	<update id="updateBoard" parameterType="web.dto.Board">
+		UPDATE board SET
+			title = #{title},
+			content = #{content}
+			<where>
+				AND board_no = #{boardno}
+			</where> 
+	</update>
+	
+	<delete id="deleteBoard" parameterType="web.dto.Board">
+		DELETE FROM board
+		<where>
+			AND board_no = #{boardno}
+		</where>
+	</delete>
+	
+	<select id="checkRecommend" resultType="int" parameterType="web.dto.Board">
+		SELECT count(*) FROM recommend
+		<where>
+			AND boardno = #{boardno}		
+		</where>
+	</select>
+	
+	<select id="isRecommend" resultType="int" parameterType="web.dto.Recommend">
+		SELECT count(*) FROM recommend
+		<where>
+			AND boardno = #{boardno}
+			AND userid = #{userid}
+		</where>
+	</select>
+	
+	<insert id="insertRecommend" parameterType="web.dto.Recommend">
+		INSERT INTO recommend (userid, boardno)
+		VALUES (#{userid}, #{boardno})
+	</insert>
+	
+	<delete id="deleteRecommend" parameterType="web.dto.Recommend">
+		DELETE FROM recommend 
+		<where>
+			AND userid = #{userid }
+			AND boardno = #{boardno }
+		</where>
+	</delete>
+	
+</mapper>

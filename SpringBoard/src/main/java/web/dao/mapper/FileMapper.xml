@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="web.dao.face.FileDao">
+<insert id="insert" parameterType="web.dto.FileTest">
+	<selectKey order="BEFORE" resultType="int" keyProperty="fileno">
+		SELECT boardfile_seq.nextval FROM dual
+	</selectKey>
+	INSERT INTO boardfile (file_no, board_no, origin_name, stored_name)
+	VALUES (#{fileno }, #{boardno }, #{originName }, #{storedName })
+</insert>
+
+<select id="getFileBoardNo" resultType="web.dto.FileTest">
+	SELECT file_no, board_no, origin_name, stored_name 
+	FROM boardfile
+	<where>
+		AND board_no = #{boardno }
+	</where>
+</select>
+
+<select id="selectByFileno" resultType="web.dto.FileTest" parameterType="int">
+	SELECT
+		file_no, board_no, origin_name, stored_name
+	FROM boardfile
+	<where>
+		AND file_no = #{fileno }
+	</where>
+</select>
+
+<delete id="delete" parameterType="web.dto.FileTest">
+	DELETE FROM boardfile
+	<where>
+		AND file_no = #{fileno }
+	</where>
+</delete>
+
+</mapper>
