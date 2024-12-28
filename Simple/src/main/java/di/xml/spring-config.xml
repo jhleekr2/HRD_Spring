@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- 여기에 Spring Config 넣을 거임 -->
+
+	<!-- beans가 메인이 아닐때는 beans:beans 형태로 태그 써야 한다 -->
+	
+	<!-- ** di.xml.Car 클래스의 객체를 생성하여
+		car라는 이름의 스프링 빈으로 등록한다 -->
+	<!-- ** 생성된 객체는 Spring Context 영역에 등록된다 -->
+	<!-- ** 스프링 프레임워크가 관리할 수 있는 객체가 된다 -->
+	<bean id="car" class="di.xml.Car" />
+	<!-- 스프링 프레임워크가 실행될때 di.xml.Car 클래스를 Spring Context에 등록 -->
+	<!-- 이후 Car 클래스가 Spring Bean이 될 것이다 -->
+
+	<!-- di.tire.Tire 인터페이스의 구현체(class)들을 Spring Bean으로 등록 -->
+	<bean id="gTire" class="di.tire.GoldTire" />
+	<bean id="sTire" class="di.tire.SilverTire" />
+	<!-- 스프링 빈으로 등록되면 new가 되어야 해서 new가 안되는 인터페이스는 원칙적으로 사용 불가 -->
+	<!-- 하지만, 특별한 설정을 하거나, 인터페이스의 구현체를 통해서 사용할 수는 있다 -->
+	
+	<!-- Constructor DI -->
+	<bean id="car2" class="di.xml.Car">
+		<constructor-arg ref="gTire" />
+	</bean>
+	
+	<!-- Setter DI -->
+	<bean id="car3" class="di.xml.Car">
+		<property name="tire" ref="sTire" />
+	</bean>
+	
+</beans>
