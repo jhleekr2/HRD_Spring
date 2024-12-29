@@ -1,12 +1,25 @@
 package web.controller;
 
+import java.io.Reader;
+import java.io.Writer;
+import java.util.HashMap;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
+
+import web.dto.User;
 
 @Controller
 @RequestMapping("/param")
@@ -106,7 +119,138 @@ public class ParamController {
 			@RequestParam(defaultValue = "0") int curPage
 			) {
 		logger.info("/param/list [GET]");
-		logger.info("curPage : {}", curPage);
+		logger.info("curPage : {}", curPage);	
+	}
+	
+	@GetMapping("/map")
+	public void paramMapForm() {}
+	
+	@PostMapping("/map")
+	public String paramMapResult(
+			
+			//일반 해시맵 객체 선언
+			// -> 전달 파라미터를 추출하지 않는다
+			HashMap<String, String> map,
+			
+			//전달 파라미터를 추출하는 해시맵 선언
+			// -> @RequestParam 적용 필수
+			@RequestParam HashMap<String, String> paramMap
+			//이런식으로 파라미터 추출이 가능하다면, DTO를 만들 필요가 없어진다.
+			//-> HashMap이 DTO의 역할을 대신해서 DTO의 문제점을 상당부분 해결할 수 있다.
+			//이미 프로젝트에서 HashMap을 적극적으로 사용한 바 있으나, HashMap 자체적인
+			//문제점도 많이 있다.
+			
+			//모델값 객체
+			, Model model
+			) {
+		logger.info("/param/map [POST]");
 		
+//		HashMap<String, String> map = new 할 필요가 없음.
+		// Spring Framework가 알아서 의존성 주입을 해준다.
+		logger.info("map: {}", map);
+		logger.info("paramMap: {}", paramMap);
+		//-----------------------------------------------------------
+		
+		//모델값 전달 - 객체를 모델값으로 전달한다
+		model.addAttribute("m", paramMap); // -> 묶음으로 1개 전달
+		
+		//모델값 전달 - 맵 객체 내부의 키=값 쌍을 각각의 모델값으로 전달한다
+		model.addAllAttributes(paramMap); // -> 6개 전달
+		//가끔 세션이랑 헷갈릴 수 있으므로 주의한다!
+		//-----------------------------------------------------------
+		return "param/result"; //WEB-INF/view/param/result.jsp
+	}
+	
+	@GetMapping("/dto")
+	public void paramDtoForm() {}
+	
+	@PostMapping("/dto")
+	public String paramDtoResult(
+			
+			//** 커맨드 객체(Command Object)
+			// -> 전달파라미터 추출 객체
+			
+			User user,
+			@ModelAttribute User user2,
+			@ModelAttribute("u3")User user3
+			
+			//** @ModelAttribute 어노테이션
+			// -> DTO객체의 멤버 필드에 맞게 전달 파라미터를 추출한다
+			// -> 모델값으로 지정하여 객체를 View에 전달한다
+			//(가급적으로 이 방법으로 쓰지 않는 것을 권장)
+			
+			) {
+		
+		logger.info("{}",user);
+		logger.info("{}",user2);
+		logger.info("{}",user3);
+		
+//		User test = new User("aaaa", "1111");
+		User u = new User();
+		//롬복 빌더를 이용한 생성
+		//(Builder Pattern)
+//		User user1 = User.builder()
+//					.userage("33")
+//					.username("Clare")
+//					.build();
+		return "param/dtoResult";
+	}
+	
+	@RequestMapping("/sample")
+	public void paramTest(
+			
+			HttpServletRequest req,
+			HttpServletResponse resp,
+			
+			Reader reader,
+			Writer writer,
+			
+			HttpSession session,
+			
+			@SessionAttribute("name") String data,
+			
+			@SessionAttribute(value="login", required = false) boolean login
+//			,@SessionAttribute(value="loginno", required = false) int loginno
+			,@SessionAttribute(value="loginno", required = false) Integer loginno
+			) {
+		
+//		logger.info("{}", req.getParameter("test"));
+//		//서블릿에서 했던 getParameter 사용하는 방법
+//		
+//		try {
+//			req.setCharacterEncoding("UTF-8");
+//		} catch (UnsupportedEncodingException e) {
+//			e.printStackTrace();
+//		}
+//		//서블릿에서 했던 인코딩 설정 변경방법
+//		
+//		try {
+//			req.getRequestDispatcher("JSP").forward(req, resp);
+//		} catch (ServletException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		//서블릿에서 했던 getRequestDispatcher 사용하는 방법
+		
+		//------------------------------------------------------------
+		
+//		try {
+//			resp.sendRedirect("URL");
+//			Writer out = resp.getWriter();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+		//스프링 프레임워크에서는 try/catch를 안해도 되도록 만들어놨는데
+		//스프링 프레임워크에서 서블릿 방식 사용하면 try/catch 해야 하기 때문에
+		//좋지 않다
+		
+		session.setAttribute("name", "value");
+		
+		logger.info("{}", session.getAttribute("name"));
+		
+		logger.info("data : {}", data);
+		logger.info("login : {}", login);
+		logger.info("loginno : {}", loginno);
 	}
 }
