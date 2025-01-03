@@ -21,8 +21,21 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
-	<context:component-scan base-package="com.test.www, *.controller" />
+	<context:component-scan base-package="com.test.www, *.controller, dept.service" />
+	<!-- dept.controller -> @Controller, dept.service -> @Service, dept.Dao -> @Repository인데 -->
+	<!-- DAO는 마이바티스에게 맡겼기 때문에 dept.Dao 등록은 X -->
+	<!-- dept만 써도 dept.**가 되어 dept.Dao가 포함되어 충돌 발생! -->
 	
+	<!-- 아래와 같은 형태로 컨트롤러와 서비스의 의존성 관계를 주입할 수 있다 -->
+<!-- 	<beans:bean class="web.controller.BoardController" id="boardController"> -->
+<!-- 		<beans:constructor-arg ref="boardService" /> -->
+<!-- 	</beans:bean> -->
 	
+<!-- 	<beans:bean class="web.service.face.BoardService" /> -->
+	
+	<!-- 하지만, 위의 xml방식이 너무 어려워서 요즘은 그냥 annotation이나 java-config 방식을 사용한다 -->
+	
+	<!-- 이 파일에는 컨트롤러와 뷰, RequestMapping 관련 설정이 들어 있다 -->
+	<!-- 이 파일을 수정한 후에는 반드시 서버를 재시작해야 한다 -->	
 	
 </beans:beans>
