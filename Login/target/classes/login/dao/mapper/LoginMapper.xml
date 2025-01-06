@@ -6,5 +6,33 @@
     
 <mapper namespace="login.dao.face.LoginDao">
 
+	<select id="selectCntByIdPw" resultType="int" parameterType="Login">
+		SELECT count(*) cnt FROM logintb
+			<where>
+				AND id = #{id }
+				AND pw = #{pw }
+			</where>
+	</select>
 
+	<select id="selectNoById" resultType="int" parameterType="Login">
+		SELECT no FROM logintb
+			<where>
+				AND id = #{id }
+			</where>
+	</select>
+
+	<insert id="joinMember" parameterType="Login">
+	<selectKey order="BEFORE" keyProperty="no" resultType="int">
+		SELECT login_seq.nextval FROM dual
+	</selectKey>
+		INSERT INTO logintb ( no, id, pw, email, phone ) 
+		VALUES ( #{no}, #{id}, #{pw}, #{email}, #{phone} )
+	</insert>
+
+	<select id="selectByNo" resultType="Login" parameterType="int">
+		SELECT no, id, email, phone	FROM logintb
+			<where>
+				AND no = #{no }
+			</where>
+	</select>
 </mapper>
