@@ -15,6 +15,14 @@
 		<level value="info" />
 	</logger>
 	
+	<!-- Tx 관련 -->
+	<logger name="tx">
+		<level value="info"/>
+	</logger>
+	<logger name="tx.dao">
+		<level value="trace"/>
+	</logger>
+	
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">
 		<level value="info" />
