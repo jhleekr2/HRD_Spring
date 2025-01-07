@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.test</groupId>
 	<artifactId>www</artifactId>
-	<name>Dept</name>
+	<name>Simple</name>
 	<packaging>war</packaging>
 	<version>1.0.0-BUILD-SNAPSHOT</version>
 	<properties>
@@ -14,7 +14,7 @@
 		<org.slf4j-version>1.6.6</org.slf4j-version>
 	</properties>
 	<dependencies>
-	
+
 <!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
 <dependency>
     <groupId>commons-fileupload</groupId>
@@ -63,6 +63,9 @@
     <version>23.5.0.24.07</version>
 </dependency>
 
+
+
+	
 		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>
