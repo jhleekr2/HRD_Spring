@@ -7,3 +7,5 @@
 * HTTP/1.1 : 8085
 
 참고: 이번 리포지토리부터 gitignore 설정 적용
+
+복습 순서 : DI(의존성 역전) -> web -> dept -> login -> sql -> tx -> interceptor -> file -> aop -> ajax
