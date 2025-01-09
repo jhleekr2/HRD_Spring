@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="file.dao.face.FileDao">
+	<insert id="insert" parameterType="FileTest">
+		<selectKey order="BEFORE" resultType="int" keyProperty="fileno">
+			SELECT filetest_seq.nextval FROM dual
+		</selectKey>
+		
+		INSERT INTO filetest ( fileno, title, origin_name, stored_name )
+		VALUES ( #{fileno }, #{title }, #{originName }, #{storedName } )
+	</insert>
+	
+	<select id="selectAll">
+		SELECT
+			fileno, title, origin_name, stored_name
+		FROM filetest
+		ORDER BY fileno desc
+		<!-- 가장 최근 파일을 먼저 조회한다 -->
+	</select>
+	
+	<select id="selectByFileno" resultType="FileTest" parameterType="int">
+		SELECT
+			fileno, title, origin_name, stored_name
+		FROM filetest
+		<where>
+			AND fileno = #{fileno }
+		</where>
+	</select>
+	
+</mapper>
